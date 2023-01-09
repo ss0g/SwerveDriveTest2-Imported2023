@@ -11,6 +11,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -145,7 +149,17 @@ public final class Constants {
     }
 
     public static final class Camera {
-        public static final String kCameraName = "photoncamera"; // TODO: rename camera to "frontcam" or similar
+        public static final String kFrontCameraName = "frontcamera";
+
+        public static final Pose2d[] kTagPoses = new Pose2d[] {
+            null,
+            new Pose2d()
+        };
+
+        public static final Transform2d kFrontCameraToRobot = new Transform2d(
+            new Pose2d(0, 0, new Rotation2d(0)), // camera
+            new Pose2d(0, 0, new Rotation2d(0)) // robot (0)
+        );
     }
 
     public static final class OI {

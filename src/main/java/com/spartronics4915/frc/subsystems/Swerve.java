@@ -2,25 +2,44 @@ package com.spartronics4915.frc.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.spartronics4915.frc.Constants.Swerve.*;
+import static com.spartronics4915.frc.Constants.Camera.*;
 
 import java.util.Arrays;
 
 public class Swerve extends SubsystemBase {
-    private SwerveDriveOdometry mOdometry;
+    // private SwerveDriveOdometry mOdometry;
+    private SwerveDrivePoseEstimator mPoseEstimator;
+
     private SwerveModule[] mModules;
+
     private AHRS mNavX;
+    private PhotonCamera mFrontCamera;
 
     private boolean mIsFieldRelative = true;
 
@@ -28,7 +47,7 @@ public class Swerve extends SubsystemBase {
         mNavX = new AHRS();
         mNavX.reset();
 
-        mOdometry = new SwerveDriveOdometry(kKinematics, getYaw(), null);
+        mFrontCamera = new PhotonCamera(NetworkTableInstance.getDefault(), kFrontCameraName);
 
         mModules = new SwerveModule[] {
             new SwerveModule(0, Module0.kConstants),
@@ -36,6 +55,16 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(2, Module2.kConstants),
             new SwerveModule(3, Module3.kConstants)
         };
+
+        // mOdometry = new SwerveDriveOdometry(kKinematics, getYaw(), getPositions());
+        mPoseEstimator = new SwerveDrivePoseEstimator(
+            kKinematics,
+            getYaw(),
+            getPositions(),
+            new Pose2d(),
+            new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.1, 0.1, 0.1),
+            new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.9, 0.9, 0.9)
+        ); // TODO: put a different pose in here
     }
 
     public void drive(Translation2d translation, double rotation, boolean isOpenLoop) {
@@ -86,7 +115,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return mOdometry.getPoseMeters();
+        return mPoseEstimator.getEstimatedPosition();
     }
 
     public Rotation2d getYaw() {
@@ -94,7 +123,7 @@ public class Swerve extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        mOdometry.resetPosition(getYaw(), getPositions(), pose);
+        mPoseEstimator.resetPosition(getYaw(), getPositions(), pose);
     }
 
     public void resetModuleZeroes() {
@@ -134,7 +163,20 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic() {
-        mOdometry.update(getYaw(), getPositions());
+        var frontLatestResult = mFrontCamera.getLatestResult();
+        if (frontLatestResult.hasTargets()) {
+            double imageCaptureTime = Timer.getFPGATimestamp() - frontLatestResult.getLatencyMillis();
+            var bestTarget = frontLatestResult.getBestTarget();
+            int bestTargetID = bestTarget.getFiducialId();
+            Transform3d camToTargetTrans = bestTarget.getBestCameraToTarget();
+            Transform2d camToTargetTrans2d = new Transform2d(
+                camToTargetTrans.getTranslation().toTranslation2d(),
+                camToTargetTrans.getRotation().toRotation2d()
+            );
+            Pose2d camPose = kTagPoses[bestTargetID].transformBy(camToTargetTrans2d.inverse());
+            mPoseEstimator.addVisionMeasurement(camPose.transformBy(kFrontCameraToRobot), imageCaptureTime);
+        }
+        mPoseEstimator.update(getYaw(), getPositions());
         for (SwerveModule mod : mModules) {
             mod.putSmartDashboardValues();
         }
