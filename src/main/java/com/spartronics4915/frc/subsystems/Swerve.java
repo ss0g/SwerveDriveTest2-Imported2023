@@ -161,8 +161,7 @@ public class Swerve extends SubsystemBase {
         setModuleStates(zeroedStates);
     }
 
-    @Override
-    public void periodic() {
+    public void updatePoseEstimator() {
         var frontLatestResult = mFrontCamera.getLatestResult();
         if (frontLatestResult.hasTargets()) {
             double imageCaptureTime = Timer.getFPGATimestamp() - frontLatestResult.getLatencyMillis();
@@ -177,6 +176,11 @@ public class Swerve extends SubsystemBase {
             mPoseEstimator.addVisionMeasurement(camPose.transformBy(kFrontCameraToRobot), imageCaptureTime);
         }
         mPoseEstimator.update(getYaw(), getPositions());
+    }
+
+    @Override
+    public void periodic() {
+        updatePoseEstimator();
         for (SwerveModule mod : mModules) {
             mod.putSmartDashboardValues();
         }
