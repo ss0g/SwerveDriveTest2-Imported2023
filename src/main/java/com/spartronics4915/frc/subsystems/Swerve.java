@@ -157,7 +157,7 @@ public class Swerve extends SubsystemBase {
     public void updatePoseEstimator() {
         var frontLatestResult = mFrontCamera.getLatestResult();
         if (frontLatestResult.hasTargets()) {
-            double imageCaptureTime = Timer.getFPGATimestamp() - frontLatestResult.getLatencyMillis();
+            double imageCaptureTime = (Timer.getFPGATimestamp() * 1000) - frontLatestResult.getLatencyMillis();
             var bestTarget = frontLatestResult.getBestTarget();
             int bestTargetID = bestTarget.getFiducialId();
             Transform3d camToTargetTrans = bestTarget.getBestCameraToTarget();
