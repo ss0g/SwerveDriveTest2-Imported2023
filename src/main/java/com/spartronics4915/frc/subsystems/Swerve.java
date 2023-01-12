@@ -21,6 +21,7 @@ public class Swerve extends SubsystemBase {
     private SwerveDriveOdometry mOdometry;
     private SwerveModule[] mModules;
     private AHRS mNavX;
+	private final int mModuleCount;
 
     private boolean mIsFieldRelative = true;
 
@@ -36,7 +37,13 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(2, Module2.kConstants),
             new SwerveModule(3, Module3.kConstants)
         };
+
+		mModuleCount = mModules.length;
     }
+
+	public int getModuleCount() {
+		return mModuleCount;
+	}
 
     public void drive(Translation2d translation, double rotation, boolean isOpenLoop) {
         ChassisSpeeds chassisSpeeds;
