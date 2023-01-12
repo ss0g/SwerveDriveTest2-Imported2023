@@ -71,6 +71,7 @@ public final class Constants {
 
         public static final double kMaxSpeed = Units.feetToMeters(11.9);
         public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
+        public static final double kMaxAcceleration = Units.feetToMeters(11.9); // TODO: get an actual value because this should be higher
 
         public static final double kSlowModeSpeedMultiplier = 0.3;
         public static final double kSlowModeAngularSpeedMultiplier = 0.3;

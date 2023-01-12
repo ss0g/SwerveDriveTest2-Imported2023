@@ -166,6 +166,8 @@ public class Swerve extends SubsystemBase {
                 camToTargetTrans.getRotation().toRotation2d()
             );
             Pose2d camPose = kTagPoses[bestTargetID].transformBy(camToTargetTrans2d.inverse());
+            SmartDashboard.putNumber("x to tag", camPose.getX());
+            SmartDashboard.putNumber("y to tag", camPose.getY());
             mPoseEstimator.addVisionMeasurement(camPose.transformBy(kFrontCameraToRobot), imageCaptureTime);
         }
         mPoseEstimator.update(getYaw(), getPositions());

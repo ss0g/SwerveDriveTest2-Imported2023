@@ -6,6 +6,7 @@ package com.spartronics4915.frc;
 
 import com.spartronics4915.frc.commands.SwerveCommands;
 import com.spartronics4915.frc.subsystems.Swerve;
+import com.spartronics4915.frc.util.Trajectories;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,6 +27,8 @@ import static com.spartronics4915.frc.Constants.OI.*;
 public class RobotContainer {
     private final XboxController mController;
 
+    private final Trajectories mTrajectories;
+
     // The robot's subsystems and commands are defined here...
     private final Swerve mSwerve;
     private final SwerveCommands mSwerveCommands;
@@ -40,6 +43,8 @@ public class RobotContainer {
      */
     public RobotContainer() {
         mController = new XboxController(kControllerID);
+
+        mTrajectories = new Trajectories();
 
         mSwerve = new Swerve();
         mSwerveCommands = new SwerveCommands(mController, mSwerve);
