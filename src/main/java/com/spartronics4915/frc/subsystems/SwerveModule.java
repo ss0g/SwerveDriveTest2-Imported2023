@@ -72,8 +72,7 @@ public class SwerveModule {
         } else {
             mDriveController.setReference(
                 desiredState.speedMetersPerSecond,
-                ControlType.kVelocity,
-                0,
+                ControlType.kVelocity, 0,
                 mFeedforward.calculate(desiredState.speedMetersPerSecond)
             );
         }
@@ -81,8 +80,6 @@ public class SwerveModule {
         double angle = Math.abs(desiredState.speedMetersPerSecond) < kMaxSpeed * 0.01 ?
             mLastAngle :
             desiredState.angle.getRadians();
-
-        // double angle = desiredState.angle.getRadians();
 
         mAngleController.setReference(angle, ControlType.kPosition);
         mLastAngle = angle;

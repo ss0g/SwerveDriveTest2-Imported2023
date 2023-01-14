@@ -1,43 +1,33 @@
 package com.spartronics4915.frc.commands;
 
 import java.util.ArrayList;
+import static com.spartronics4915.frc.Constants.Trajectory.*;
 
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 import com.spartronics4915.frc.subsystems.Swerve;
-import com.spartronics4915.frc.subsystems.SwervePoseEstimator;
 
 public class SwerveTrajectoryFollowerCommands {
 	private final Swerve mSwerve;
-	private final SwervePoseEstimator mPoseEstimator;
 	private final SwerveDriveKinematics mKinematics;
 	private final PIDController mXPID, mYPID;
 	private final ProfiledPIDController mThetaPID;
 
-	public SwerveTrajectoryFollowerCommands(
-		Swerve swerve,
-		SwervePoseEstimator poseEstimator,
-		double xP, double yP, double thetaP
-	) {
-		mPoseEstimator = poseEstimator;
+	public SwerveTrajectoryFollowerCommands(Swerve swerve) {
 		mSwerve = swerve;
 
 		mKinematics = new SwerveDriveKinematics();
-		mXPID = new PIDController(xP, 0, 0);
-		mYPID = new PIDController(yP, 0, 0);
+		mXPID = new PIDController(kLinearP, 0, 0);
+		mYPID = new PIDController(kLinearP, 0, 0);
 		mThetaPID = new ProfiledPIDController(
-			thetaP, 0, 0, new TrapezoidProfile.Constraints(0, 0)
+			kThetaP, 0, 0, new TrapezoidProfile.Constraints(0, 0)
 		);
 		mThetaPID.enableContinuousInput(0, 2 * Math.PI);
 	}
@@ -65,7 +55,7 @@ public class SwerveTrajectoryFollowerCommands {
 						.setStartVelocity(startVelocity)
 						.setEndVelocity(endVelocity)
 				),
-				mPoseEstimator::getPose,
+				mSwerve::getPose,
 				mKinematics,
 				mXPID, mYPID,
 				updateThetaPID(

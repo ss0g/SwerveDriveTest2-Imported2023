@@ -6,17 +6,14 @@ package com.spartronics4915.frc;
 
 import com.spartronics4915.frc.commands.SwerveCommands;
 import com.spartronics4915.frc.subsystems.Swerve;
+import com.spartronics4915.frc.util.Trajectories;
 
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import static com.spartronics4915.frc.Constants.OI.*;
-
-import com.ctre.phoenix.ButtonMonitor;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,6 +26,8 @@ import com.ctre.phoenix.ButtonMonitor;
  */
 public class RobotContainer {
     private final XboxController mController;
+
+    private final Trajectories mTrajectories;
 
     // The robot's subsystems and commands are defined here...
     private final Swerve mSwerve;
@@ -44,6 +43,8 @@ public class RobotContainer {
      */
     public RobotContainer() {
         mController = new XboxController(kControllerID);
+
+        mTrajectories = new Trajectories();
 
         mSwerve = new Swerve();
         mSwerveCommands = new SwerveCommands(mController, mSwerve);
@@ -67,13 +68,13 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         new JoystickButton(mController, kToggleFieldRelativeButton)
-            .whenPressed(mSwerveCommands.new ToggleFieldRelative());
+            .onTrue(mSwerveCommands.new ToggleFieldRelative());
 
         new JoystickButton(mController, kResetYawButton)
-            .whenPressed(mSwerveCommands.new ResetYaw());
+            .onTrue(mSwerveCommands.new ResetYaw());
 
         new JoystickButton(mController, kResetOdometryButton)
-            .whenPressed(mSwerveCommands.new ResetOdometry());
+            .onTrue(mSwerveCommands.new ResetOdometry());
     }
 
     /**

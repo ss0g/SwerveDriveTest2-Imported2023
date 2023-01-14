@@ -4,14 +4,11 @@ import com.spartronics4915.frc.subsystems.Swerve;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-
 import static com.spartronics4915.frc.Constants.Swerve.*;
 import static com.spartronics4915.frc.Constants.OI.*;
 
@@ -19,7 +16,6 @@ public class SwerveCommands {
     private final XboxController mController;
 
     private final Swerve mSwerve;
-    private boolean mIsFieldRelative = true;
     private boolean mIsSlowMode = false;
 
     public SwerveCommands(XboxController controller, Swerve swerve) {
@@ -27,112 +23,35 @@ public class SwerveCommands {
         mSwerve = swerve;
     }
 
-    public class SetFieldRelative extends CommandBase {
+    public class SetFieldRelative extends InstantCommand {
         public SetFieldRelative(boolean fieldRelative) {
-            mIsFieldRelative = fieldRelative;
-        }
-
-        @Override
-        public void initialize() {
-            mSwerve.setFieldRelative(mIsFieldRelative);
-        }
-
-        @Override
-        public void execute() {}
-
-        @Override
-        public void end(boolean interrupted) {
-            mIsFieldRelative = mSwerve.getFieldRelative(); // just to make sure
-        }
-
-        @Override
-        public boolean isFinished() {
-            return true;
+            mSwerve.setFieldRelative(fieldRelative);
         }
     }
 
-    public class ToggleFieldRelative extends CommandBase {
-        public ToggleFieldRelative() {}
-
-        @Override
-        public void initialize() {
-            mSwerve.toggleFieldRelative();
-        }
-
-        @Override
-        public void execute() {}
-
-        @Override
-        public void end(boolean interrupted) {
-            mIsFieldRelative = mSwerve.getFieldRelative();
-        }
-
-        @Override
-        public boolean isFinished() {
-            return true;
-        }
+    public class ToggleFieldRelative extends InstantCommand {
+        public ToggleFieldRelative() {
+			mSwerve.toggleFieldRelative();
+		}
     }
 
-    public class ResetYaw extends CommandBase {
-        public ResetYaw() {}
-
-        @Override
-        public void initialize() {
-            mSwerve.zeroNavX();
-        }
-
-        @Override
-        public void execute() {}
-
-        @Override
-        public void end(boolean interrupted) {}
-
-        @Override
-        public boolean isFinished() {
-            return true;
-        }
+    public class ResetYaw extends InstantCommand {
+        public ResetYaw() {
+			mSwerve.zeroNavX();
+		}
     }
 
-    public class ResetOdometry extends CommandBase {
-        public ResetOdometry() {}
-
-        @Override
-        public void initialize() {
+    public class ResetOdometry extends InstantCommand {
+        public ResetOdometry() {
             mSwerve.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
-        }
-
-        @Override
-        public void execute() {}
-
-        @Override
-        public void end(boolean interrupted) {}
-
-        @Override
-        public boolean isFinished() {
-            return true;
-        }
+		}
     }
 
-    public class TeleopInitCommand extends CommandBase {
+    public class TeleopInitCommand extends InstantCommand {
         public TeleopInitCommand() {
             addRequirements(mSwerve);
-        }
-
-        @Override
-        public void initialize() {
-            mSwerve.resetOdometry(new Pose2d()); // for odometry testing
+            mSwerve.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
             mSwerve.zeroModules();
-        }
-
-        @Override
-        public void execute() {}
-
-        @Override
-        public void end(boolean interrupted) {}
-
-        @Override
-        public boolean isFinished() {
-            return true;
         }
     }
 

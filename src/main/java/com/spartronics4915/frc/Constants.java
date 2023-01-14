@@ -4,17 +4,18 @@
 
 package com.spartronics4915.frc;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -34,6 +35,11 @@ import edu.wpi.first.wpilibj.XboxController;
  * rotation is positive, and the angle measure 0 is directly away from the alliance wall.
  */
 public final class Constants {
+	public static final class Trajectory {
+		public static final double kLinearP = 1.0;
+		public static final double kThetaP = 1.0;
+	}
+
     public static final class Swerve {
         public static final class Drive {
             public static final double kP = 0.0;
@@ -45,7 +51,7 @@ public final class Constants {
             public static final double kV = 0.0; // placeholder
             public static final double kA = 0.0; // placeholder
 
-            public static final int kContinuousCurrentLimit = 30; // 80
+            public static final int kContinuousCurrentLimit = 30;
 
             public static final double kGearRatio = 8.33 / 1.0;
             public static final double kVelocityConversionFactor = ((kWheelDiameter * Math.PI) / kGearRatio) / 60.0; // ??? what is the 60 ?? TODO: try removing
@@ -67,9 +73,11 @@ public final class Constants {
         public static final double kTrackWidth = 0.75;
         public static final double kWheelBase = 0.75;
         public static final double kChassisRadius = Math.hypot(kTrackWidth / 2.0, kWheelBase / 2.0);
+		public static final Pose2d kInitialPose = new Pose2d();
 
         public static final double kMaxSpeed = Units.feetToMeters(11.9);
         public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
+        public static final double kMaxAcceleration = Units.feetToMeters(11.9); // TODO: get an actual value because this should be higher
 
         public static final double kSlowModeSpeedMultiplier = 0.3;
         public static final double kSlowModeAngularSpeedMultiplier = 0.3;
@@ -145,7 +153,17 @@ public final class Constants {
     }
 
     public static final class Camera {
-        public static final String kCameraName = "photoncamera"; // TODO: rename camera to "frontcam" or similar
+        public static final String kFrontCameraName = "frontcamera";
+
+        public static final Pose2d[] kTagPoses = new Pose2d[] {
+            null,
+            new Pose2d()
+        };
+
+        public static final Transform2d kFrontCameraToRobot = new Transform2d(
+            new Pose2d(0, 0, new Rotation2d(0)), // camera
+            new Pose2d(0, 0, new Rotation2d(0)) // robot (0)
+        );
     }
 
     public static final class OI {
