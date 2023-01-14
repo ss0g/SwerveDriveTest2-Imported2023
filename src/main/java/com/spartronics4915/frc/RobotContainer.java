@@ -4,9 +4,10 @@
 
 package com.spartronics4915.frc;
 
+import com.spartronics4915.frc.commands.Autos;
 import com.spartronics4915.frc.commands.SwerveCommands;
+import com.spartronics4915.frc.commands.SwerveTrajectoryFollowerCommands;
 import com.spartronics4915.frc.subsystems.Swerve;
-import com.spartronics4915.frc.util.Trajectories;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,11 +28,13 @@ import static com.spartronics4915.frc.Constants.OI.*;
 public class RobotContainer {
     private final XboxController mController;
 
-    private final Trajectories mTrajectories;
+	private final SwerveTrajectoryFollowerCommands mSwerveTrajectoryFollowerCommands;
 
     // The robot's subsystems and commands are defined here...
     private final Swerve mSwerve;
     private final SwerveCommands mSwerveCommands;
+
+	private final Autos mAutos;
 
     private final Command mAutonomousCommand;
     private final Command mTeleopInitCommand;
@@ -44,12 +47,14 @@ public class RobotContainer {
     public RobotContainer() {
         mController = new XboxController(kControllerID);
 
-        mTrajectories = new Trajectories();
-
         mSwerve = new Swerve();
         mSwerveCommands = new SwerveCommands(mController, mSwerve);
 
-        mAutonomousCommand = null;
+		mSwerveTrajectoryFollowerCommands = new SwerveTrajectoryFollowerCommands(mSwerve);
+
+		mAutos = new Autos(mSwerve, mSwerveTrajectoryFollowerCommands);
+
+        mAutonomousCommand = mAutos.new MoveForwardCommand();
         mTeleopInitCommand = mSwerveCommands.new TeleopInitCommand();
         mTeleopCommand = mSwerveCommands.new TeleopCommand();
         mTestingCommand = mSwerveCommands.new TestCommand();

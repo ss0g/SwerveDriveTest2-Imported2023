@@ -45,8 +45,8 @@ public class SwerveTrajectoryFollowerCommands {
 		public FollowTrajectory(
 			ArrayList<Pose2d> waypoints, // meters
 			double startVelocity, double endVelocity, double maxVelocity, // meters per second
-			double maxAngularVelocity, double maxAngularAcceleration, // radians per second
-			double maxAccel // meters per second squared
+			double maxAccel, // meters per second squared
+			double maxAngularVelocity, double maxAngularAcceleration // radians per second
 		) {
 			super(
 				TrajectoryGenerator.generateTrajectory(
