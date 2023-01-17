@@ -29,6 +29,11 @@ public final class Autos {
 	private final Swerve mSwerve;
 	private final boolean mIsOpenLoop = true;
 	private final SwerveTrajectoryFollowerCommands mSwerveTrajectoryFollowerCommands;
+	private final double maxVelocity = 0.3;
+	private final double maxAccel = 0.4;
+	private final double maxAngularVelocity = 0.8;
+	private final double maxAngularAcceleration = 0.2;
+			
 
     public Autos(Swerve swerve, SwerveTrajectoryFollowerCommands swerveTrajectoryFollowerCommands) {
 		mSwerve = swerve;
@@ -46,12 +51,26 @@ public final class Autos {
 		}
 	}
 
+	public class MoveForwardCommandFancy extends SequentialCommandGroup {
+		public MoveForwardCommandFancy() {
+			addRequirements(mSwerve);
+			addCommands(
+				mSwerveTrajectoryFollowerCommands.new FollowTrajectory(
+					new ArrayList<>(List.of(
+						new Pose2d(0, 0, new Rotation2d(Math.PI / 2)),
+						new Pose2d(0, 1, new Rotation2d(Math.PI / 2))
+					)),
+					0, 0,
+					maxVelocity, maxAccel,
+					maxAngularVelocity, maxAngularAcceleration
+				),
+				new InstantCommand(() -> mSwerve.drive(new Translation2d(), 0, mIsOpenLoop))
+			);
+		}
+	}
+
 	public class MoveBackAndForthFancy extends SequentialCommandGroup {
 		public MoveBackAndForthFancy() {
-			double maxVelocity = 2.0;
-			double maxAccel = 0.4;
-			double maxAngularVelocity = 0.8;
-			double maxAngularAcceleration = 0.2;
 			Pose2d aprilTag1 = new Pose2d(0, 0, new Rotation2d(Math.PI / 2));
 			Pose2d aprilTag2 = new Pose2d(0, 6, new Rotation2d(-Math.PI / 2));
 			addCommands(

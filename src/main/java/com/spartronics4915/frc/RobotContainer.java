@@ -54,7 +54,8 @@ public class RobotContainer {
 
 		mAutos = new Autos(mSwerve, mSwerveTrajectoryFollowerCommands);
 
-        mAutonomousCommand = mAutos.new MoveForwardCommand();
+        // mAutonomousCommand = mAutos.new MoveForwardCommand();
+		mAutonomousCommand = mAutos.new MoveForwardCommandFancy();
         mTeleopInitCommand = mSwerveCommands.new TeleopInitCommand();
         mTeleopCommand = mSwerveCommands.new TeleopCommand();
         mTestingCommand = mSwerveCommands.new TestCommand();
