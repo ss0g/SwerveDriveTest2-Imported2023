@@ -101,6 +101,15 @@ public class Swerve extends SubsystemBase {
         }
     }
 
+    public void forceModuleOrientations(Rotation2d orientation, boolean isOpenLoop) {
+        // Forces all of the modules to one orientation
+        // Mainly for testing - be careful if you use it
+
+        for (SwerveModule mod : mModules) {
+            mod.forceModuleOrientation(orientation, isOpenLoop);
+        }
+    }
+    
     public void setFieldRelative(boolean fieldRelative) {
         mIsFieldRelative = fieldRelative;
     }
