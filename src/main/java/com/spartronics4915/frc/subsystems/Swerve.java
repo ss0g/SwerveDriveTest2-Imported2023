@@ -104,6 +104,8 @@ public class Swerve extends SubsystemBase {
     public void forceModuleOrientations(Rotation2d orientation, boolean isOpenLoop) {
         // Forces all of the modules to one orientation
         // Mainly for testing - be careful if you use it
+        System.out.println("ForceOrientation!");
+        System.out.println(orientation.toString());
 
         for (SwerveModule mod : mModules) {
             mod.forceModuleOrientation(orientation, isOpenLoop);
@@ -144,6 +146,14 @@ public class Swerve extends SubsystemBase {
         SwerveModuleState[] states = new SwerveModuleState[4];
         for (SwerveModule mod : mModules) {
             states[mod.getModuleNumber()] = mod.getState();
+        }
+        return states;
+    }
+
+    public SwerveModuleState[] getDesiredStates() {
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for (SwerveModule mod : mModules) {
+            states[mod.getModuleNumber()] = mod.getDesiredState();
         }
         return states;
     }

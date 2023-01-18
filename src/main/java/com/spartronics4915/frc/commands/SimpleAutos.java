@@ -11,7 +11,6 @@ public final class SimpleAutos {
   /** Example static factory for an autonomous command. */
   public static CommandBase forceOrientation(Swerve swerve_subsystem, Rotation2d orientation) {
 
-
     return Commands.runOnce(
       () -> swerve_subsystem.forceModuleOrientations(orientation, false), swerve_subsystem);
   }
