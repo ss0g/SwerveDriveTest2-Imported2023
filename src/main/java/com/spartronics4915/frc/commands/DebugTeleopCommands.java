@@ -23,25 +23,35 @@ public final class DebugTeleopCommands {
 
     public static class SwerveModuleWidget {
         private GenericEntry angleEntry;
-        SwerveModuleWidget(ShuffleboardTab tab) {
-            ShuffleboardLayout swerve_module = tab.getLayout("SwerveModule State", BuiltInLayouts.kList)
+        private GenericEntry state_angle;
+        SwerveModuleWidget(ShuffleboardTab tab, String name) {
+            ShuffleboardLayout swerve_module = tab.getLayout(name, BuiltInLayouts.kList)
             .withSize(2, 2).withProperties(Map.of("Label position", "LEFT"));
     
-            angleEntry = swerve_module.add("Angle", 0).getEntry();
+            angleEntry = swerve_module.add("desired.angle", 0).getEntry();
+            state_angle = swerve_module.add("current.angle", 0).getEntry();
+        }
+        
+        public void update(SwerveModuleState current, SwerveModuleState desired) {
+            angleEntry.setDouble(desired.angle.getDegrees()); 
+            state_angle.setDouble(current.angle.getDegrees()); 
         }
     }
     public static class SwerveTab {
-        SwerveModuleWidget module0;
+        SwerveModuleWidget module0, module1, module2, module3;
         ShuffleboardTab tab;
         Swerve swerve_subsystem;
 
         SwerveTab(Swerve swerve) {
             tab = Shuffleboard.getTab("Swerve");
-            module0 = new SwerveModuleWidget(tab);
+            module0 = new SwerveModuleWidget(tab, "Module 0");
+            module1 = new SwerveModuleWidget(tab, "Module 1");
+            module2 = new SwerveModuleWidget(tab, "Module 2");
+            module3 = new SwerveModuleWidget(tab, "Module 3");
             swerve_subsystem = swerve;
             ShuffleboardLayout elevatorCommands = 
             tab.getLayout("Orientation", BuiltInLayouts.kList)
-            .withSize(1, 2)
+            .withSize(2, 2)
             .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
     
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(0)).withName("Orientation 0"));
@@ -52,8 +62,13 @@ public final class DebugTeleopCommands {
 
     public void update(){
 
-        var swerve_modules = swerve_subsystem.getDesiredStates();
-        module0.angleEntry.setDouble(swerve_modules[0].angle.getDegrees()); 
+        var swerve_module_desired_states = swerve_subsystem.getDesiredStates();
+        var swerve_module_states = swerve_subsystem.getStates();
+
+        module0.update(swerve_module_states[0], swerve_module_desired_states[0]);
+        module1.update(swerve_module_states[1], swerve_module_desired_states[1]);
+        module2.update(swerve_module_states[2], swerve_module_desired_states[2]);
+        module3.update(swerve_module_states[3], swerve_module_desired_states[3]);
     }
 }
 

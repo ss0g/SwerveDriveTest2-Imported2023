@@ -99,6 +99,9 @@ public class SwerveModule {
         return mModuleNumber;
     }
 
+    public SwerveModuleState getDesiredState() {
+        return mDesiredState;
+    }
     public void putSmartDashboardValues() {
         SmartDashboard.putNumber("mod " + mModuleNumber + " encoder", mSteeringEncoder.getDistance());
         SmartDashboard.putNumber("mod " + mModuleNumber + " encoder absolute", mSteeringEncoder.getAbsolutePosition());
