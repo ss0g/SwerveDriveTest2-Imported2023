@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 import com.spartronics4915.frc.subsystems.Swerve;
@@ -65,6 +66,19 @@ public class SwerveTrajectoryFollowerCommands {
 				mSwerve
 			);
 
+		}
+
+		@Override
+		public void execute() {
+			super.execute();
+			SmartDashboard.putNumber("Swerve xPID Setpoint", mXPID.getSetpoint());
+			SmartDashboard.putNumber("Swerve xPID Position Error", mXPID.getPositionError());
+			
+			SmartDashboard.putNumber("Swerve yPID Setpoint", mYPID.getSetpoint());
+			SmartDashboard.putNumber("Swerve yPID Position Error", mYPID.getPositionError());
+			
+			// SmartDashboard.putNumber("Swerve thetaPID Setpoint", mThetaPID.getSetpoint());
+			SmartDashboard.putNumber("Swerve thetaPID Position Error", mThetaPID.getPositionError());
 		}
 	}
 }

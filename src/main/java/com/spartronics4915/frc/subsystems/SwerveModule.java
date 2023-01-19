@@ -50,7 +50,6 @@ public class SwerveModule {
         configureAngleMotor();
 
         mSteeringEncoder = new AnalogEncoder(new AnalogInput(encoderID));
-        mSteeringEncoder.setPositionOffset(angleOffset);
         confugureSteeringEncoder();
 
         mDesiredState = new SwerveModuleState();
@@ -104,7 +103,7 @@ public class SwerveModule {
 
     private void confugureSteeringEncoder() {
         mSteeringEncoder.setDistancePerRotation(2 * Math.PI);
-        mSteeringEncoder.setPositionOffset(mAngleOffset);
+        mSteeringEncoder.setPositionOffset(mAngleOffset / (Math.PI * 2));
     }
 
     private void configureDriveMotor() {
