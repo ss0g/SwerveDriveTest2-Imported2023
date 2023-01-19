@@ -4,6 +4,8 @@
 
 package com.spartronics4915.frc;
 
+import com.spartronics4915.frc.commands.DebugTeleopCommands;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -101,6 +103,7 @@ public class Robot extends TimedRobot {
             mAutonomousCommand.cancel();
         }
 
+        mRobotContainer.initTeleop();
         if (mTeleopCommand != null) {
             mTeleopCommand.schedule();
         }

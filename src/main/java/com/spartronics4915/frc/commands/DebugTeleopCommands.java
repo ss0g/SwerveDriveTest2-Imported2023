@@ -3,6 +3,7 @@ package com.spartronics4915.frc.commands;
 import com.spartronics4915.frc.subsystems.Swerve;
 import com.spartronics4915.frc.subsystems.SwerveModule;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
@@ -16,10 +17,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 import java.util.Map;
 
-import com.spartronics4915.frc.commands.SimpleAutos;
-
 
 public final class DebugTeleopCommands {
+
+    public static void TeleopInit(Swerve swerve_subsystem) {
+        swerve_subsystem.resetModuleZeroes();
+        swerve_subsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
+        swerve_subsystem.stop();
+        System.out.println("Teleopinit called");
+
+    }
 
     public static class SwerveModuleWidget {
         private GenericEntry angleEntry;

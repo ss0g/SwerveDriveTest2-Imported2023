@@ -119,7 +119,7 @@ public class SwerveModule {
 
     public void resetToAbsolute() {
 		System.out.println("PLEASE, PLEASE MACHINE!!!");
-		mIntegratedAngleEncoder.setPosition(0);
+		mIntegratedAngleEncoder.setPosition(50);
         // mIntegratedAngleEncoder.setPosition(mSteeringEncoder.getAbsolutePosition() * Math.PI * 2 - mAngleOffset);
     }
 
