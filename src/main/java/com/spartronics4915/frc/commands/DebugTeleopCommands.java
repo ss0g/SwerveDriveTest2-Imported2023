@@ -30,18 +30,25 @@ public final class DebugTeleopCommands {
 
     public static class SwerveModuleWidget {
         private GenericEntry angleEntry;
-        private GenericEntry state_angle;
+        private GenericEntry state_angle, abs_encoder, rel_encoder;
         SwerveModuleWidget(ShuffleboardTab tab, String name) {
             ShuffleboardLayout swerve_module = tab.getLayout(name, BuiltInLayouts.kList)
             .withSize(2, 2).withProperties(Map.of("Label position", "LEFT"));
     
             angleEntry = swerve_module.add("desired.angle", 0).getEntry();
             state_angle = swerve_module.add("current.angle", 0).getEntry();
+            abs_encoder = swerve_module.add("abs_encoder", 0).getEntry();
+            rel_encoder = swerve_module.add("rel_encoder", 0).getEntry();
         }
         
-        public void update(SwerveModuleState current, SwerveModuleState desired) {
+        public void update(SwerveModule module) {
+            SwerveModuleState current = module.getState();
+            SwerveModuleState desired = module.getDesiredState();
+
             angleEntry.setDouble(desired.angle.getDegrees()); 
-            state_angle.setDouble(current.angle.getDegrees()); 
+            state_angle.setDouble(current.angle.getDegrees());
+            abs_encoder.setDouble(module.getAbsoluteEncoderValue()); 
+            rel_encoder.setDouble(module.getRelativeEncoderValue());
         }
     }
     public static class SwerveTab {
@@ -70,19 +77,17 @@ public final class DebugTeleopCommands {
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-90)).withName("Orientation -90"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-180)).withName("Orientation -180"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-270)).withName("Orientation -270"));
-    
-
+            elevatorCommands.add(Commands.runOnce(() -> swerve.zeroPIDP()).withName("Zero PID P"));
         }
 
     public void update(){
 
-        var swerve_module_desired_states = swerve_subsystem.getDesiredStates();
-        var swerve_module_states = swerve_subsystem.getStates();
+        var swerve_modules = swerve_subsystem.getSwerveModules();
 
-        module0.update(swerve_module_states[0], swerve_module_desired_states[0]);
-        module1.update(swerve_module_states[1], swerve_module_desired_states[1]);
-        module2.update(swerve_module_states[2], swerve_module_desired_states[2]);
-        module3.update(swerve_module_states[3], swerve_module_desired_states[3]);
+        module0.update(swerve_modules[0]);
+        module1.update(swerve_modules[1]);
+        module2.update(swerve_modules[2]);
+        module3.update(swerve_modules[3]);
     }
 }
 

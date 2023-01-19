@@ -104,6 +104,7 @@ public class Robot extends TimedRobot {
         }
 
         mRobotContainer.initTeleop();
+        
         if (mTeleopCommand != null) {
             mTeleopCommand.schedule();
         }

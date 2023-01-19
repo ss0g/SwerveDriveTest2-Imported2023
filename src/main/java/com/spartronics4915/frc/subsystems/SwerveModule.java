@@ -118,9 +118,20 @@ public class SwerveModule {
     }
 
     public void resetToAbsolute() {
-		System.out.println("PLEASE, PLEASE MACHINE!!!");
-		mIntegratedAngleEncoder.setPosition(50);
-        // mIntegratedAngleEncoder.setPosition(mSteeringEncoder.getAbsolutePosition() * Math.PI * 2 - mAngleOffset);
+		mIntegratedAngleEncoder.setPosition(0);
+        Rotation2d encoderAngle = Rotation2d.fromRotations(mSteeringEncoder.getAbsolutePosition() - mAngleOffset);
+
+        mIntegratedAngleEncoder.setPosition(encoderAngle.getRadians());
+    }
+
+    public double getAbsoluteEncoderValue() {
+
+        return mSteeringEncoder.getAbsolutePosition();
+    }
+
+    public double getRelativeEncoderValue() {
+
+        return mIntegratedAngleEncoder.getPosition();
     }
 
     private void configureSteeringEncoder() {
@@ -167,5 +178,9 @@ public class SwerveModule {
         double drivePosition = mDriveEncoder.getPosition();
         Rotation2d angle = getState().angle;
         return new SwerveModulePosition(drivePosition, angle);
+    }
+
+    public void zeroPIDP(){
+        mAngleController.setP(0);
     }
 }

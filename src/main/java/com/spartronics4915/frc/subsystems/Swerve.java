@@ -181,6 +181,17 @@ public class Swerve extends SubsystemBase {
         setModuleStates(zeroedStates);
     }
 
+    public SwerveModule[] getSwerveModules() {
+        return mModules;
+    }
+
+    public void zeroPIDP(){
+        for (var module: getSwerveModules()) {
+
+            module.zeroPIDP();
+        }
+    }
+
 	private class VisionMeasurement {
 		public Pose2d mPose;
 		public double mTime;
