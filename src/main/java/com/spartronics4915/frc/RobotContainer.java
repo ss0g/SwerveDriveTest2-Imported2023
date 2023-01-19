@@ -13,6 +13,7 @@ import com.spartronics4915.frc.subsystems.Swerve;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import static com.spartronics4915.frc.Constants.OI.*;
@@ -95,12 +96,8 @@ public class RobotContainer {
         return mAutonomousCommand;
     }
 
-    public Command getTeleopInitCommand() {
-        return mTeleopInitCommand;
-    }
-
     public Command getTeleopCommand() {
-        return mTeleopCommand;
+        return new SequentialCommandGroup(mTeleopCommand, mTeleopInitCommand);
     }
 
     public Command getTestingCommand() {
