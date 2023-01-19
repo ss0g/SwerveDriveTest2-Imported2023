@@ -86,9 +86,10 @@ public class SwerveModule {
             );
         }
 
-        double angle = Math.abs(desiredState.speedMetersPerSecond) < kMaxSpeed * 0.01 ?
+        double angle = desiredState.angle.getRadians();
+		/*Math.abs(desiredState.speedMetersPerSecond) < kMaxSpeed * 0.01 ?
             mLastAngle :
-            desiredState.angle.getRadians();
+            desiredState.angle.getRadians();*/
 
         mAngleController.setReference(angle, ControlType.kPosition);
         mLastAngle = angle;
@@ -150,7 +151,7 @@ public class SwerveModule {
 
     public SwerveModuleState getState() {
         double velocity = mDriveEncoder.getVelocity();
-        Rotation2d angle = Rotation2d.fromDegrees(mIntegratedAngleEncoder.getPosition()); // TODO: why isnt this using the analog encoder
+        Rotation2d angle = Rotation2d.fromRadians(mIntegratedAngleEncoder.getPosition()); // TODO: why isnt this using the analog encoder
         return new SwerveModuleState(velocity, angle);
     }
 

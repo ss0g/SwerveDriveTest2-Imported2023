@@ -49,6 +49,8 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(2, Module2.kConstants),
             new SwerveModule(3, Module3.kConstants)
         };
+		
+		resetModuleZeroes();
 
 		mModuleCount = mModules.length;
         
@@ -170,7 +172,7 @@ public class Swerve extends SubsystemBase {
         mNavX.reset();
     }
 
-    public void zeroModules() {
+    public void stop() {
         SwerveModuleState[] zeroedStates = new SwerveModuleState[4];
         Arrays.fill(zeroedStates, new SwerveModuleState(0, new Rotation2d(0)));
         // for (SwerveModuleState state : zeroedStates) {
