@@ -5,6 +5,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -50,7 +51,7 @@ public class SwerveModule {
         configureAngleMotor();
 
         mSteeringEncoder = new AnalogEncoder(new AnalogInput(encoderID));
-        confugureSteeringEncoder();
+        configureSteeringEncoder();
 
         mDesiredState = new SwerveModuleState();
 
@@ -72,7 +73,7 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
+        // desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         mDesiredState = desiredState;
 
         if (isOpenLoop) {
@@ -103,21 +104,28 @@ public class SwerveModule {
         return mDesiredState;
     }
     public void putSmartDashboardValues() {
-        SmartDashboard.putNumber("mod " + mModuleNumber + " encoder", mSteeringEncoder.getDistance());
-        SmartDashboard.putNumber("mod " + mModuleNumber + " encoder absolute", mSteeringEncoder.getAbsolutePosition());
-        SmartDashboard.putNumber("mod " + mModuleNumber + " integrated", mIntegratedAngleEncoder.getPosition());
-        SmartDashboard.putNumber("mod " + mModuleNumber + " velocity", mDriveEncoder.getVelocity());
+        // SmartDashboard.putNumber("mod " + mModuleNumber + " encoder", mSteeringEncoder.getDistance());
+        
+		// SmartDashboard.putNumber("mod " + mModuleNumber + " absEnc.getDistance()", mSteeringEncoder.getDistance() - mAngleOffset);
+		
+		SmartDashboard.putNumber("mod " + mModuleNumber + " encoder absolute", mSteeringEncoder.getAbsolutePosition());
+		SmartDashboard.putNumber("mod " + mModuleNumber + " encoder relative", mIntegratedAngleEncoder.getPosition());
 
-        SmartDashboard.putNumber("mod " + mModuleNumber + " desired angle", mDesiredState.angle.getRadians());
+        // SmartDashboard.putNumber("mod " + mModuleNumber + " integrated", mIntegratedAngleEncoder.getPosition());
+        // SmartDashboard.putNumber("mod " + mModuleNumber + " velocity", mDriveEncoder.getVelocity());
+
+        // SmartDashboard.putNumber("mod " + mModuleNumber + " desired angle", mDesiredState.angle.getRadians());
     }
 
     public void resetToAbsolute() {
-        mIntegratedAngleEncoder.setPosition(mSteeringEncoder.getAbsolutePosition());
+		System.out.println("PLEASE, PLEASE MACHINE!!!");
+		mIntegratedAngleEncoder.setPosition(0);
+        // mIntegratedAngleEncoder.setPosition(mSteeringEncoder.getAbsolutePosition() * Math.PI * 2 - mAngleOffset);
     }
 
-    private void confugureSteeringEncoder() {
-        mSteeringEncoder.setDistancePerRotation(2 * Math.PI);
-        mSteeringEncoder.setPositionOffset(mAngleOffset / (Math.PI * 2));
+    private void configureSteeringEncoder() {
+        // mSteeringEncoder.setDistancePerRotation(2 * Math.PI);
+        // mSteeringEncoder.setPositionOffset(mAngleOffset / (Math.PI * 2));
     }
 
     private void configureDriveMotor() {
@@ -140,7 +148,7 @@ public class SwerveModule {
         mAngleMotor.restoreFactoryDefaults();
         mAngleMotor.setSmartCurrentLimit(Angle.kContinuousCurrentLimit);
         mAngleMotor.setIdleMode(kAngleIdleMode);
-        mIntegratedAngleEncoder.setPositionConversionFactor(Angle.kPositionConversionFactor);
+        // mIntegratedAngleEncoder.setPositionConversionFactor(Angle.kPositionConversionFactor);
         mAngleController.setP(Angle.kP);
         mAngleController.setI(Angle.kI);
         mAngleController.setD(Angle.kD);

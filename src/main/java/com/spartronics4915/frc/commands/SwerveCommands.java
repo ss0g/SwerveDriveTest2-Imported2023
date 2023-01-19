@@ -3,6 +3,7 @@ package com.spartronics4915.frc.commands;
 import com.spartronics4915.frc.subsystems.Swerve;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.math.MathUtil;
@@ -24,25 +25,51 @@ public class SwerveCommands {
     }
 
     public class SetFieldRelative extends InstantCommand {
+		private boolean mFieldRelative;
+
         public SetFieldRelative(boolean fieldRelative) {
-            mSwerve.setFieldRelative(fieldRelative);
+			mFieldRelative = fieldRelative;
         }
+
+		@Override
+		public void initialize() {
+			super.initialize();
+			
+            mSwerve.setFieldRelative(mFieldRelative);
+		}
     }
 
     public class ToggleFieldRelative extends InstantCommand {
         public ToggleFieldRelative() {
+
+		}
+
+		@Override
+		public void initialize() {
+			super.initialize();
 			mSwerve.toggleFieldRelative();
 		}
     }
 
     public class ResetYaw extends InstantCommand {
         public ResetYaw() {
+
+		}
+		@Override
+		public void initialize() {
+			super.initialize();
 			mSwerve.zeroNavX();
 		}
     }
 
     public class ResetOdometry extends InstantCommand {
         public ResetOdometry() {
+
+		}
+		
+		@Override
+		public void initialize() {
+			super.initialize();
             mSwerve.resetOdometry(new Pose2d(0, 0, new Rotation2d(0)));
 		}
     }
@@ -50,9 +77,15 @@ public class SwerveCommands {
     public class TeleopInitCommand extends InstantCommand {
         public TeleopInitCommand() {
             addRequirements(mSwerve);
-            mSwerve.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
-            mSwerve.stop();
         }
+		
+		@Override
+		public void initialize() {
+			super.initialize();
+			mSwerve.resetModuleZeroes();
+			mSwerve.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
+            mSwerve.stop();
+		}
     }
 
     public class TeleopCommand extends CommandBase {

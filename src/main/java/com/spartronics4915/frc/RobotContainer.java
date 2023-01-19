@@ -40,7 +40,7 @@ public class RobotContainer {
     private final Command mAutonomousCommand;
     private final Command mTeleopInitCommand;
     private final Command mTeleopCommand;
-    private final Command mTestingCommand;
+    // private final Command mTestingCommand;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -57,11 +57,11 @@ public class RobotContainer {
 
         // mAutonomousCommand = mAutos.new MoveForwardCommand();
 		mAutonomousCommand = mAutos.new MoveForwardCommandFancy();
-        mTeleopInitCommand = null;// DebugTeleopCommands.getShuffleboardInitCommand(mSwerve);
+        // mTeleopInitCommand = null;// DebugTeleopCommands.getShuffleboardInitCommand(mSwerve);
         mTeleopCommand = DebugTeleopCommands.getShuffleboardInitCommand(mSwerve);
-        //mTeleopInitCommand = mSwerveCommands.new TeleopInitCommand();
+        mTeleopInitCommand = mSwerveCommands.new TeleopInitCommand();
         //mTeleopCommand = mSwerveCommands.new TeleopCommand();
-        mTestingCommand = mSwerveCommands.new TestCommand();
+        // mTestingCommand = mSwerveCommands.new TestCommand();
 
         // Configure the button bindings
         configureButtonBindings();
@@ -76,14 +76,14 @@ public class RobotContainer {
      * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        new JoystickButton(mController, kToggleFieldRelativeButton)
-            .onTrue(mSwerveCommands.new ToggleFieldRelative());
+        // new JoystickButton(mController, kToggleFieldRelativeButton)
+        //     .onTrue(mSwerveCommands.new ToggleFieldRelative());
 
-        new JoystickButton(mController, kResetYawButton)
-            .onTrue(mSwerveCommands.new ResetYaw());
+        // new JoystickButton(mController, kResetYawButton)
+        //     .onTrue(mSwerveCommands.new ResetYaw());
 
-        new JoystickButton(mController, kResetOdometryButton)
-            .onTrue(mSwerveCommands.new ResetOdometry());
+        // new JoystickButton(mController, kResetOdometryButton)
+        //     .onTrue(mSwerveCommands.new ResetOdometry());
     }
 
     /**
@@ -104,6 +104,7 @@ public class RobotContainer {
     }
 
     public Command getTestingCommand() {
-        return mTestingCommand;
+        // return mTestingCommand;
+		return null;
     }
 }
