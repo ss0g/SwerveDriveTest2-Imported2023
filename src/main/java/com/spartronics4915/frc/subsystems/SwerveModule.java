@@ -61,6 +61,16 @@ public class SwerveModule {
         this(moduleNumber, constants.driveMotorID, constants.angleMotorID, constants.encoderID, constants.angleOffset);
     }
 
+    public void forceModuleOrientation(Rotation2d newAngle, boolean isOpenLoop){
+        // Forces all of the modules to a desired orientation.  Will not change the speed
+        // Mainly for testing, be careful if you use this.
+
+        var currentState = this.getState();
+        var newState = new SwerveModuleState(currentState.speedMetersPerSecond, newAngle);
+
+        this.setDesiredState(newState, isOpenLoop);
+    }
+
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         mDesiredState = desiredState;
@@ -88,6 +98,9 @@ public class SwerveModule {
         return mModuleNumber;
     }
 
+    public SwerveModuleState getDesiredState() {
+        return mDesiredState;
+    }
     public void putSmartDashboardValues() {
         SmartDashboard.putNumber("mod " + mModuleNumber + " encoder", mSteeringEncoder.getDistance());
         SmartDashboard.putNumber("mod " + mModuleNumber + " encoder absolute", mSteeringEncoder.getAbsolutePosition());

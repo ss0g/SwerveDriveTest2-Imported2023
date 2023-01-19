@@ -5,6 +5,7 @@
 package com.spartronics4915.frc;
 
 import com.spartronics4915.frc.commands.Autos;
+import com.spartronics4915.frc.commands.DebugTeleopCommands;
 import com.spartronics4915.frc.commands.SwerveCommands;
 import com.spartronics4915.frc.commands.SwerveTrajectoryFollowerCommands;
 import com.spartronics4915.frc.subsystems.Swerve;
@@ -56,8 +57,10 @@ public class RobotContainer {
 
         // mAutonomousCommand = mAutos.new MoveForwardCommand();
 		mAutonomousCommand = mAutos.new MoveForwardCommandFancy();
-        mTeleopInitCommand = mSwerveCommands.new TeleopInitCommand();
-        mTeleopCommand = mSwerveCommands.new TeleopCommand();
+        mTeleopInitCommand = null;// DebugTeleopCommands.getShuffleboardInitCommand(mSwerve);
+        mTeleopCommand = DebugTeleopCommands.getShuffleboardInitCommand(mSwerve);
+        //mTeleopInitCommand = mSwerveCommands.new TeleopInitCommand();
+        //mTeleopCommand = mSwerveCommands.new TeleopCommand();
         mTestingCommand = mSwerveCommands.new TestCommand();
 
         // Configure the button bindings
