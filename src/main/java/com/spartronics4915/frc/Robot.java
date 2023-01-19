@@ -41,6 +41,10 @@ public class Robot extends TimedRobot {
         mAutonomousCommand = mRobotContainer.getAutonomousCommand();
         mTeleopCommand = mRobotContainer.getTeleopCommand();
         mTestingCommand = mRobotContainer.getTestingCommand();
+
+        Command robotInitCommand = mRobotContainer.getRobotInitCommand();
+
+        robotInitCommand.schedule();
     }
 
     /**

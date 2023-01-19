@@ -19,22 +19,22 @@ import java.util.Map;
 
 
 public final class DebugTeleopCommands {
-
+    
     public static void TeleopInit(Swerve swerve_subsystem) {
         swerve_subsystem.resetModuleZeroes();
         swerve_subsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
         swerve_subsystem.stop();
         System.out.println("Teleopinit called");
-
+        
     }
-
+    
     public static class SwerveModuleWidget {
         private GenericEntry angleEntry;
         private GenericEntry state_angle, abs_encoder, rel_encoder;
         SwerveModuleWidget(ShuffleboardTab tab, String name) {
             ShuffleboardLayout swerve_module = tab.getLayout(name, BuiltInLayouts.kList)
             .withSize(2, 2).withProperties(Map.of("Label position", "LEFT"));
-    
+            
             angleEntry = swerve_module.add("desired.angle", 0).getEntry();
             state_angle = swerve_module.add("current.angle", 0).getEntry();
             abs_encoder = swerve_module.add("abs_encoder", 0).getEntry();
@@ -44,7 +44,7 @@ public final class DebugTeleopCommands {
         public void update(SwerveModule module) {
             SwerveModuleState current = module.getState();
             SwerveModuleState desired = module.getDesiredState();
-
+            
             angleEntry.setDouble(desired.angle.getDegrees()); 
             state_angle.setDouble(current.angle.getDegrees());
             abs_encoder.setDouble(module.getAbsoluteEncoderValue()); 
@@ -55,7 +55,7 @@ public final class DebugTeleopCommands {
         SwerveModuleWidget module0, module1, module2, module3;
         ShuffleboardTab tab;
         Swerve swerve_subsystem;
-
+        
         SwerveTab(Swerve swerve) {
             tab = Shuffleboard.getTab("Swerve");
             module0 = new SwerveModuleWidget(tab, "Module 0");
@@ -67,37 +67,69 @@ public final class DebugTeleopCommands {
             tab.getLayout("Orientation", BuiltInLayouts.kList)
             .withSize(2, 2)
             .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
-    
+            
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(0)).withName("Orientation 0"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(90)).withName("Orientation 90"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(180)).withName("Orientation 180"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(270)).withName("Orientation 270"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(360)).withName("Orientation 360"));
-    
+            
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-90)).withName("Orientation -90"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-180)).withName("Orientation -180"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-270)).withName("Orientation -270"));
             elevatorCommands.add(Commands.runOnce(() -> swerve.zeroPIDP()).withName("Zero PID P"));
         }
-
-    public void update(){
-
-        var swerve_modules = swerve_subsystem.getSwerveModules();
-
-        module0.update(swerve_modules[0]);
-        module1.update(swerve_modules[1]);
-        module2.update(swerve_modules[2]);
-        module3.update(swerve_modules[3]);
+        
+        public void update(){
+            
+            var swerve_modules = swerve_subsystem.getSwerveModules();
+            
+            module0.update(swerve_modules[0]);
+            module1.update(swerve_modules[1]);
+            module2.update(swerve_modules[2]);
+            module3.update(swerve_modules[3]);
+        }
     }
-}
+    
+    public static class ShuffleboardUpdateCommand extends CommandBase {
+        
+        Swerve m_swerve_subsystem;
+        SwerveTab m_swerve_tab;
+
+        public ShuffleboardUpdateCommand(Swerve swerve_subsystem) {
+            m_swerve_subsystem = swerve_subsystem;
+        }
+        // Called when the command is initially scheduled.
+        
+        @Override
+        public void initialize() {
+            
+            m_swerve_tab = new SwerveTab(m_swerve_subsystem);
+        }
+        
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+            m_swerve_tab.update();
+        }
+
+        // Lets this command run even when disabled
+        @Override
+        public boolean runsWhenDisabled() {
+
+            return true;
+        }
 
 
-
-
-
-    public static CommandBase getShuffleboardInitCommand(Swerve swerve_subsystem) {
-
-        SwerveTab tab  = new SwerveTab(swerve_subsystem);
-        return Commands.run(()->tab.update());
+        // Called once the command ends or is interrupted.
+        @Override
+        public void end(boolean interrupted) {}
+        
+        // Returns true when the command should end.
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+        
     }
 }

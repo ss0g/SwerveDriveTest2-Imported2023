@@ -100,7 +100,7 @@ public class RobotContainer {
             }
             
             public Command getTeleopCommand() {
-                return DebugTeleopCommands.getShuffleboardInitCommand(mSwerve);
+                return null;
             }
             
             public Command getTestingCommand() {
@@ -108,6 +108,10 @@ public class RobotContainer {
                 return null;
             }
 
+            public Command getRobotInitCommand() {
+
+                return new DebugTeleopCommands.ShuffleboardUpdateCommand(mSwerve);
+            }
             public void initTeleop() {
                 DebugTeleopCommands.TeleopInit(mSwerve);
             }
