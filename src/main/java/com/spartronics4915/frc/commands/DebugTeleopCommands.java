@@ -21,7 +21,7 @@ import java.util.Map;
 public final class DebugTeleopCommands {
     
     public static void TeleopInit(Swerve swerve_subsystem) {
-        swerve_subsystem.resetModuleZeroes();
+        swerve_subsystem.resetToAbsolute();
         swerve_subsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
         swerve_subsystem.stop();
         System.out.println("Teleopinit called");
@@ -30,7 +30,7 @@ public final class DebugTeleopCommands {
     
     public static class SwerveModuleWidget {
         private GenericEntry angleEntry;
-        private GenericEntry state_angle, abs_encoder, rel_encoder;
+        private GenericEntry state_angle, abs_encoder, rel_encoder, rel_encoder_deg, shifted_abs_encoder;
         SwerveModuleWidget(ShuffleboardTab tab, String name) {
             ShuffleboardLayout swerve_module = tab.getLayout(name, BuiltInLayouts.kList)
             .withSize(2, 2).withProperties(Map.of("Label position", "LEFT"));
@@ -39,6 +39,8 @@ public final class DebugTeleopCommands {
             state_angle = swerve_module.add("current.angle", 0).getEntry();
             abs_encoder = swerve_module.add("abs_encoder", 0).getEntry();
             rel_encoder = swerve_module.add("rel_encoder", 0).getEntry();
+            rel_encoder_deg = swerve_module.add("rel_encoder (degrees)", 0).getEntry();
+            shifted_abs_encoder = swerve_module.add("shifted abs_encoder", 0).getEntry();
         }
         
         public void update(SwerveModule module) {
@@ -49,6 +51,9 @@ public final class DebugTeleopCommands {
             state_angle.setDouble(current.angle.getDegrees());
             abs_encoder.setDouble(module.getAbsoluteEncoderValue()); 
             rel_encoder.setDouble(module.getRelativeEncoderValue());
+            rel_encoder_deg.setDouble(Rotation2d.fromRadians(module.getRelativeEncoderValue()).getDegrees());
+            shifted_abs_encoder.setDouble(module.getShiftedAbsoluteEncoderValue());
+
         }
     }
     public static class SwerveTab {
@@ -65,7 +70,7 @@ public final class DebugTeleopCommands {
             swerve_subsystem = swerve;
             ShuffleboardLayout elevatorCommands = 
             tab.getLayout("Orientation", BuiltInLayouts.kList)
-            .withSize(2, 2)
+            .withSize(2, 3)
             .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
             
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(0)).withName("Orientation 0"));
@@ -74,10 +79,11 @@ public final class DebugTeleopCommands {
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(270)).withName("Orientation 270"));
             elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(360)).withName("Orientation 360"));
             
-            elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-90)).withName("Orientation -90"));
-            elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-180)).withName("Orientation -180"));
-            elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-270)).withName("Orientation -270"));
+            // elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-90)).withName("Orientation -90"));
+            // elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-180)).withName("Orientation -180"));
+            // elevatorCommands.add(SimpleAutos.forceOrientation(swerve_subsystem, Rotation2d.fromDegrees(-270)).withName("Orientation -270"));
             elevatorCommands.add(Commands.runOnce(() -> swerve.zeroPIDP()).withName("Zero PID P"));
+            elevatorCommands.add(Commands.runOnce(() -> swerve_subsystem.resetToAbsolute()).withName("Reset to Absolute"));
         }
         
         public void update(){

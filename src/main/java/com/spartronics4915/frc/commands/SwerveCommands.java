@@ -82,7 +82,7 @@ public class SwerveCommands {
 		@Override
 		public void initialize() {
 			super.initialize();
-			mSwerve.resetModuleZeroes();
+			mSwerve.resetToAbsolute();
 			mSwerve.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
             mSwerve.stop();
 		}

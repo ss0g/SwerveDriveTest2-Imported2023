@@ -108,9 +108,12 @@ public class RobotContainer {
                 return null;
             }
 
-            public Command getRobotInitCommand() {
+            public void initRobot() {
 
-                return new DebugTeleopCommands.ShuffleboardUpdateCommand(mSwerve);
+                Command shuffleboard_update_command = new DebugTeleopCommands.ShuffleboardUpdateCommand(mSwerve);
+                shuffleboard_update_command.schedule();
+
+                mSwerve.resetToAbsolute();
             }
             public void initTeleop() {
                 DebugTeleopCommands.TeleopInit(mSwerve);

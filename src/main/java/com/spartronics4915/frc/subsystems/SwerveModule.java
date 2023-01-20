@@ -18,7 +18,7 @@ import static com.spartronics4915.frc.Constants.Swerve.*;
 
 public class SwerveModule {
     private final int mModuleNumber;
-    private double mAngleOffset;
+    private double mAbsoluteOffset;
     private double mLastAngle;
 
     private CANSparkMax mDriveMotor;
@@ -35,10 +35,10 @@ public class SwerveModule {
 
     private SimpleMotorFeedforward mFeedforward = new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA);
 
-    public SwerveModule(int moduleNumber, int driveMotorID, int angleMotorID, int encoderID, double angleOffset) {
+    public SwerveModule(int moduleNumber, int driveMotorID, int angleMotorID, int encoderID, double absoluteOffset) {
         mModuleNumber = moduleNumber;
 
-        mAngleOffset = angleOffset;
+        mAbsoluteOffset = absoluteOffset;
         
         mDriveMotor = kMotorConstructor.apply(driveMotorID);
         mDriveEncoder = mDriveMotor.getEncoder();
@@ -59,7 +59,7 @@ public class SwerveModule {
     }
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants constants) {
-        this(moduleNumber, constants.driveMotorID, constants.angleMotorID, constants.encoderID, constants.angleOffset);
+        this(moduleNumber, constants.driveMotorID, constants.angleMotorID, constants.encoderID, constants.absoluteOffset);
     }
 
     public void forceModuleOrientation(Rotation2d newAngle, boolean isOpenLoop){
@@ -118,16 +118,23 @@ public class SwerveModule {
     }
 
     public void resetToAbsolute() {
-		mIntegratedAngleEncoder.setPosition(0);
-        Rotation2d encoderAngle = Rotation2d.fromRotations(mSteeringEncoder.getAbsolutePosition() - mAngleOffset);
+        Rotation2d encoderAngle = Rotation2d.fromRotations(mSteeringEncoder.getAbsolutePosition() - mAbsoluteOffset);
 
+        System.out.println(mModuleNumber + " " + mSteeringEncoder.getAbsolutePosition() + " " + encoderAngle.getRadians());
         mIntegratedAngleEncoder.setPosition(encoderAngle.getRadians());
+        mDriveController.setReference(encoderAngle.getRadians(), ControlType.kPosition);
     }
 
     public double getAbsoluteEncoderValue() {
 
         return mSteeringEncoder.getAbsolutePosition();
     }
+
+    public double getShiftedAbsoluteEncoderValue() {
+
+        return mSteeringEncoder.getAbsolutePosition() - mAbsoluteOffset;
+    }
+
 
     public double getRelativeEncoderValue() {
 
@@ -159,7 +166,7 @@ public class SwerveModule {
         mAngleMotor.restoreFactoryDefaults();
         mAngleMotor.setSmartCurrentLimit(Angle.kContinuousCurrentLimit);
         mAngleMotor.setIdleMode(kAngleIdleMode);
-        // mIntegratedAngleEncoder.setPositionConversionFactor(Angle.kPositionConversionFactor);
+        mIntegratedAngleEncoder.setPositionConversionFactor(Angle.kPositionConversionFactor);
         mAngleController.setP(Angle.kP);
         mAngleController.setI(Angle.kI);
         mAngleController.setD(Angle.kD);

@@ -50,7 +50,7 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(3, Module3.kConstants)
         };
 		
-		resetModuleZeroes();
+		resetToAbsolute();
 
 		mModuleCount = mModules.length;
         
@@ -138,7 +138,7 @@ public class Swerve extends SubsystemBase {
         mPoseEstimator.resetPosition(getYaw(), getPositions(), pose);
     }
 
-    public void resetModuleZeroes() {
+    public void resetToAbsolute() {
         for (SwerveModule mod : mModules) {
             mod.resetToAbsolute();
         }
