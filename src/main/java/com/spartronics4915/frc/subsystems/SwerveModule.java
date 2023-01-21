@@ -86,7 +86,8 @@ public class SwerveModule {
             );
         }
 
-        double angle = Math.abs(desiredState.speedMetersPerSecond) < kMaxSpeed * 0.01 ?
+        boolean suppressTurningAtLowSpeed = false;
+        double angle = (suppressTurningAtLowSpeed && Math.abs(desiredState.speedMetersPerSecond) < kMaxSpeed * 0.01) ?
             mLastAngle :
             desiredState.angle.getRadians();
 

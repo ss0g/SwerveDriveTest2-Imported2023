@@ -22,8 +22,10 @@ public final class DebugTeleopCommands {
     
     public static void teleopInit(Swerve swerve_subsystem) {
         swerve_subsystem.resetToAbsolute();
+        swerve_subsystem.zeroNavX();
         swerve_subsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
         swerve_subsystem.stop();
+        swerve_subsystem.alignModules();
         System.out.println("Teleopinit called");
         
     }
