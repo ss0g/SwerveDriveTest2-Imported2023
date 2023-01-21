@@ -8,6 +8,7 @@ import com.spartronics4915.frc.commands.Autos;
 import com.spartronics4915.frc.commands.DebugTeleopCommands;
 import com.spartronics4915.frc.commands.SwerveCommands;
 import com.spartronics4915.frc.commands.SwerveTrajectoryFollowerCommands;
+import com.spartronics4915.frc.commands.SwerveCommands.TeleopCommand;
 import com.spartronics4915.frc.subsystems.Swerve;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -39,18 +40,16 @@ public class RobotContainer {
     private final Autos mAutos;
     
     private final Command mAutonomousCommand;
+	private final Command mTeleopCommand;
     
-    private final boolean useJoystick = false;
+    private final boolean useJoystick = true;
     // private final Command mTestingCommand;
     
     /**
     * The container for the robot. Contains subsystems, OI devices, and commands.
     */
     public RobotContainer() {
-        if (useJoystick)
-        mController = new XboxController(kControllerID);
-        else
-        mController = null;
+        mController = useJoystick ? new XboxController(kControllerID) : null;
         
         mSwerve = new Swerve();
         mSwerveCommands = new SwerveCommands(mController, mSwerve);
@@ -59,11 +58,8 @@ public class RobotContainer {
         
         mAutos = new Autos(mSwerve, mSwerveTrajectoryFollowerCommands);
         
-        // mAutonomousCommand = mAutos.new MoveForwardCommand();
         mAutonomousCommand = mAutos.new MoveForwardCommandFancy();
-        // mTeleopInitCommand = null;// DebugTeleopCommands.getShuffleboardInitCommand(mSwerve);
-        //mTeleopCommand = mSwerveCommands.new TeleopCommand();
-        // mTestingCommand = mSwerveCommands.new TestCommand();
+        mTeleopCommand = mSwerveCommands.new TeleopCommand();
         
         // Configure the button bindings
         configureButtonBindings();
@@ -78,7 +74,7 @@ public class RobotContainer {
             * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
             */
             private void configureButtonBindings() {
-                if(useJoystick) {
+                if (useJoystick) {
                     new JoystickButton(mController, kToggleFieldRelativeButton)
                     .onTrue(mSwerveCommands.new ToggleFieldRelative());
                     
@@ -100,23 +96,22 @@ public class RobotContainer {
             }
             
             public Command getTeleopCommand() {
-                return null;
+                return mTeleopCommand;
             }
             
             public Command getTestingCommand() {
-                // return mTestingCommand;
                 return null;
             }
 
             public void initRobot() {
-
                 Command shuffleboard_update_command = new DebugTeleopCommands.ShuffleboardUpdateCommand(mSwerve);
                 shuffleboard_update_command.schedule();
 
                 mSwerve.resetToAbsolute();
             }
+
             public void initTeleop() {
-                DebugTeleopCommands.TeleopInit(mSwerve);
+                DebugTeleopCommands.teleopInit(mSwerve);
             }
         }
         

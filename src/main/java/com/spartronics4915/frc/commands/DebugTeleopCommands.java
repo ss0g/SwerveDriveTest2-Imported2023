@@ -20,7 +20,7 @@ import java.util.Map;
 
 public final class DebugTeleopCommands {
     
-    public static void TeleopInit(Swerve swerve_subsystem) {
+    public static void teleopInit(Swerve swerve_subsystem) {
         swerve_subsystem.resetToAbsolute();
         swerve_subsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d(0))); // for odometry testing
         swerve_subsystem.stop();
@@ -34,7 +34,7 @@ public final class DebugTeleopCommands {
         SwerveModuleWidget(ShuffleboardTab tab, String name) {
             ShuffleboardLayout swerve_module = tab.getLayout(name, BuiltInLayouts.kList)
             .withSize(2, 2).withProperties(Map.of("Label position", "LEFT"));
-            
+
             angleEntry = swerve_module.add("desired.angle", 0).getEntry();
             state_angle = swerve_module.add("current.angle", 0).getEntry();
             abs_encoder = swerve_module.add("abs_encoder", 0).getEntry();
@@ -52,7 +52,7 @@ public final class DebugTeleopCommands {
             abs_encoder.setDouble(module.getAbsoluteEncoderValue()); 
             rel_encoder.setDouble(module.getRelativeEncoderValue());
             rel_encoder_deg.setDouble(Rotation2d.fromRadians(module.getRelativeEncoderValue()).getDegrees());
-            shifted_abs_encoder.setDouble(module.getShiftedAbsoluteEncoderValue());
+            shifted_abs_encoder.setDouble(module.getShiftedAbsoluteEncoderRotations());
 
         }
     }

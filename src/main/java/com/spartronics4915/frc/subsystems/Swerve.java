@@ -172,6 +172,10 @@ public class Swerve extends SubsystemBase {
         mNavX.reset();
     }
 
+	public void alignModules() {
+		forceModuleOrientations(Rotation2d.fromRadians(0), true);
+	}
+
     public void stop() {
         SwerveModuleState[] zeroedStates = new SwerveModuleState[4];
         Arrays.fill(zeroedStates, new SwerveModuleState(0, new Rotation2d(0)));

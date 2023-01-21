@@ -51,7 +51,6 @@ public class SwerveModule {
         configureAngleMotor();
 
         mSteeringEncoder = new AnalogEncoder(new AnalogInput(encoderID));
-        configureSteeringEncoder();
 
         mDesiredState = new SwerveModuleState();
 
@@ -73,7 +72,7 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        //desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
+        desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         mDesiredState = desiredState;
 
         if (isOpenLoop) {
@@ -87,10 +86,9 @@ public class SwerveModule {
             );
         }
 
-        double angle = desiredState.angle.getRadians();
-		/*Math.abs(desiredState.speedMetersPerSecond) < kMaxSpeed * 0.01 ?
+        double angle = Math.abs(desiredState.speedMetersPerSecond) < kMaxSpeed * 0.01 ?
             mLastAngle :
-            desiredState.angle.getRadians();*/
+            desiredState.angle.getRadians();
 
         mAngleController.setReference(angle, ControlType.kPosition);
         mLastAngle = angle;
@@ -125,29 +123,20 @@ public class SwerveModule {
     }
 
     public double getAbsoluteEncoderValue() {
-
         return 1.0 - mSteeringEncoder.getAbsolutePosition();
     }
 
     public Rotation2d getShiftedAbsoluteEncoderRotation() {
         return Rotation2d.fromRotations(getAbsoluteEncoderValue()).minus(
             Rotation2d.fromRotations(mAbsoluteOffset));
-
     }
-    public double getShiftedAbsoluteEncoderValue() {
 
+    public double getShiftedAbsoluteEncoderRotations() {
         return getShiftedAbsoluteEncoderRotation().getRotations();
     }
 
-
     public double getRelativeEncoderValue() {
-
         return mIntegratedAngleEncoder.getPosition();
-    }
-
-    private void configureSteeringEncoder() {
-        // mSteeringEncoder.setDistancePerRotation(2 * Math.PI);
-        // mSteeringEncoder.setPositionOffset(mAngleOffset / (Math.PI * 2));
     }
 
     private void configureDriveMotor() {
