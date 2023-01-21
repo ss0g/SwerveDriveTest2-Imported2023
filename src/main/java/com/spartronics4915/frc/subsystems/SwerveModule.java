@@ -73,7 +73,7 @@ public class SwerveModule {
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        // desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
+        //desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         mDesiredState = desiredState;
 
         if (isOpenLoop) {
@@ -119,18 +119,18 @@ public class SwerveModule {
 
     public void resetToAbsolute() {
         Rotation2d encoderAngle = getShiftedAbsoluteEncoderRotation();
-        System.out.println(mModuleNumber + " " + mSteeringEncoder.getAbsolutePosition() + " " + encoderAngle.getRadians());
+        System.out.println(mModuleNumber + " " + getAbsoluteEncoderValue() + " " + encoderAngle.getRadians());
         mIntegratedAngleEncoder.setPosition(encoderAngle.getRadians());
         mDriveController.setReference(encoderAngle.getRadians(), ControlType.kPosition);
     }
 
     public double getAbsoluteEncoderValue() {
 
-        return mSteeringEncoder.getAbsolutePosition();
+        return 1.0 - mSteeringEncoder.getAbsolutePosition();
     }
 
     public Rotation2d getShiftedAbsoluteEncoderRotation() {
-        return Rotation2d.fromRotations(mSteeringEncoder.getAbsolutePosition()).minus(
+        return Rotation2d.fromRotations(getAbsoluteEncoderValue()).minus(
             Rotation2d.fromRotations(mAbsoluteOffset));
 
     }
