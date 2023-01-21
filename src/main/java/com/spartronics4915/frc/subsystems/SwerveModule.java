@@ -30,15 +30,18 @@ public class SwerveModule {
 
     private final SparkMaxPIDController mDriveController;
     private final SparkMaxPIDController mAngleController;
+    private boolean mInvertDirection;
 
     private SwerveModuleState mDesiredState;
 
     private SimpleMotorFeedforward mFeedforward = new SimpleMotorFeedforward(Drive.kS, Drive.kV, Drive.kA);
 
-    public SwerveModule(int moduleNumber, int driveMotorID, int angleMotorID, int encoderID, double absoluteOffset) {
+    public SwerveModule(int moduleNumber, int driveMotorID, int angleMotorID, int encoderID, 
+                        double absoluteOffset, boolean invertDirection) {
         mModuleNumber = moduleNumber;
 
         mAbsoluteOffset = absoluteOffset;
+        mInvertDirection = invertDirection;
         
         mDriveMotor = kMotorConstructor.apply(driveMotorID);
         mDriveEncoder = mDriveMotor.getEncoder();
@@ -58,7 +61,8 @@ public class SwerveModule {
     }
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants constants) {
-        this(moduleNumber, constants.driveMotorID, constants.angleMotorID, constants.encoderID, constants.absoluteOffset);
+        this(moduleNumber, constants.driveMotorID, constants.angleMotorID, constants.encoderID, constants.absoluteOffset,
+        constants.invertDirection);
     }
 
     public void forceModuleOrientation(Rotation2d newAngle, boolean isOpenLoop){
@@ -121,6 +125,10 @@ public class SwerveModule {
 
     public void resetToAbsolute() {
         Rotation2d encoderAngle = getShiftedAbsoluteEncoderRotation();
+        if (mInvertDirection) {
+
+            encoderAngle = encoderAngle.rotateBy(Rotation2d.fromDegrees(180));
+        }
         System.out.println(mModuleNumber + " " + getAbsoluteEncoderValue() + " " + encoderAngle.getRadians());
         mIntegratedAngleEncoder.setPosition(encoderAngle.getRadians());
         mDriveController.setReference(encoderAngle.getRadians(), ControlType.kPosition);
