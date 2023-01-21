@@ -67,11 +67,11 @@ public class SwerveModule {
 
         var currentState = this.getState();
         var newState = new SwerveModuleState(currentState.speedMetersPerSecond, newAngle);
-
-        this.setDesiredState(newState, isOpenLoop);
+		
+        this.setDesiredState(newState, isOpenLoop, false);
     }
 
-    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean suppressTurningAtLowSpeed) {
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         mDesiredState = desiredState;
 
@@ -86,7 +86,6 @@ public class SwerveModule {
             );
         }
 
-        boolean suppressTurningAtLowSpeed = false;
         double angle = (suppressTurningAtLowSpeed && Math.abs(desiredState.speedMetersPerSecond) < kMaxSpeed * 0.01) ?
             mLastAngle :
             desiredState.angle.getRadians();
@@ -94,6 +93,10 @@ public class SwerveModule {
         mAngleController.setReference(angle, ControlType.kPosition);
         mLastAngle = angle;
     }
+
+	public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+		setDesiredState(desiredState, isOpenLoop, true);
+	}
 
     public int getModuleNumber() {
         return mModuleNumber;
